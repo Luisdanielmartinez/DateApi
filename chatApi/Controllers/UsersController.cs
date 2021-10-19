@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace chatApi.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    
+    public class UsersController : BaseApiController
     {
         public readonly DataContext _context;
         public UsersController(DataContext context)
