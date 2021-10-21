@@ -45,7 +45,7 @@ namespace chatApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AppUser>>Login(LoginDto login)
+        public async Task<ActionResult<UserDto>>Login(LoginDto login)
         {
 
             var user = await _context.Users.SingleOrDefaultAsync(x=> x.UserName==login.UserName);
@@ -60,7 +60,7 @@ namespace chatApi.Controllers
             {
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
             }
-            return user;
+            return new UserDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) }; ;
         }
 
         private async Task<bool> UserExists(string userName)
