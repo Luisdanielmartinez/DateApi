@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace chatApi.DTOs
 {
-    public class RegisterDto
+    public class LoginDto
     {
         [Required]
         public string UserName { get; set; }

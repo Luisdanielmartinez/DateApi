@@ -41,6 +41,25 @@ namespace chatApi.Controllers
             return user;
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<AppUser>>Login(LoginDto login)
+        {
+
+            var user = await _context.Users.SingleOrDefaultAsync(x=> x.UserName==login.UserName);
+
+            if (user == null) return Unauthorized("Invalid userName");
+
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
+
+            for (int i=0; i<computedHash.Length; i++)
+            {
+                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+            }
+            return user;
+        }
+
         private async Task<bool> UserExists(string userName)
         {
             return await _context.Users.AnyAsync(x => x.UserName == userName.ToLower());
