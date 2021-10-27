@@ -31,12 +31,22 @@ namespace chatApi.Controllers
         [HttpGet("server-error")]
         public ActionResult<string> GetServerError()
         {
-            var thing = _context.Users.Find(-1);
 
-            var thingToReturn = thing.ToString();
+            try
+            {
+
+                var thing = _context.Users.Find(-1);
+
+                var thingToReturn = thing.ToString();
 
 
-            return thingToReturn;
+                return thingToReturn;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Cumpeter says no!");
+            }
+           
         }
         [HttpGet("bad-request")]
         public ActionResult<string> GetBadRequest()
@@ -46,7 +56,7 @@ namespace chatApi.Controllers
 
         // test the user
         [HttpGet("auth")]
-        public ActionResult<string> GetSecret()
+        public ActionResult<string> GetSecret() 
         {
             return "secret text";
         }
