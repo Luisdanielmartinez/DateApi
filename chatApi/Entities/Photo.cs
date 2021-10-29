@@ -1,5 +1,8 @@
-﻿namespace chatApi.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace chatApi.Entities
 {
+    [Table("Photos")]
     public class Photo
     {
         public int Id { get; set; }
