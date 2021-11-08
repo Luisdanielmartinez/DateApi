@@ -1,5 +1,6 @@
 ﻿using chatApi.Data;
 using chatApi.Entities;
+using chatApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,27 +11,32 @@ using System.Threading.Tasks;
 
 namespace chatApi.Controllers
 {
-    
+    [Authorize]
     public class UsersController : BaseApiController
     {
-        public readonly DataContext _context;
-        public UsersController(DataContext context)
+        public readonly IUserRepository _userRepository;
+        public UsersController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
         [HttpGet]
-        [AllowAnonymous]
-        public async Task< ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            return await _context.Users.ToListAsync(); 
+
+            return Ok(await _userRepository.GetUserAsync(););
         }
 
         //api/users/3
-        [Authorize]
+
         [HttpGet("{id}")]
-        public async Task< ActionResult<AppUser>> GetUser(int id)
+        public async Task<ActionResult<AppUser>> GetUser(int id)
         {
-            return await _context.Users.FindAsync(id); ;
+            return await _userRepository.GetUserByIdAsync(id);
+        }
+        [HttpGet("{username}")]
+        public async Task<ActionResult<AppUser>> GetByUserName(string userName)
+        {
+            return await _userRepository.GetUserByUserNameAsync(userName);
         }
     }
 }
