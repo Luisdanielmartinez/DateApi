@@ -35,11 +35,12 @@ namespace chatApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //extensions 
             services.AddApplicationServices(_config);
          
             services.AddControllers();
             services.AddCors();
-
+            //extensions 
             services.AddIdentityServices(_config);
             //add the authentication middleware
            
@@ -48,6 +49,7 @@ namespace chatApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //add the middleware errors
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
@@ -55,6 +57,7 @@ namespace chatApi
             app.UseRouting();
 
             app.UseAuthorization();
+            //add the cors
             app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5001"));
             //add the authentication middleware
             app.UseAuthentication();
