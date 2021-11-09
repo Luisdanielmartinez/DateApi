@@ -26,11 +26,7 @@ namespace chatApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var users = await _userRepository.GetUserAsync();
-
-            var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
-
-            return Ok(usersToReturn);
+            return Ok(await _userRepository.GetMembersAsync());
         }
 
         //api/users/3
@@ -46,9 +42,7 @@ namespace chatApi.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetByUserName(string userName)
         {
-            var user=await _userRepository.GetUserByUserNameAsync(userName);
-
-            return _mapper.Map<MemberDto>(user);
+            return await _userRepository.GetMemberAsync(userName);
         }
     }
 }

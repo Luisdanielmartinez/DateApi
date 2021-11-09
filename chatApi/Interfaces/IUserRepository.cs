@@ -1,4 +1,5 @@
-﻿using chatApi.Entities;
+﻿using chatApi.DTOs;
+using chatApi.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,11 @@ namespace chatApi.Interfaces
     {
         void Update(AppUser user);
         Task<bool> SaveAllAsync();
-        Task<IEnumerable<AppUser>> GetUserAsync();
+        //Task<IEnumerable<AppUser>> GetUserAsync();
         Task<AppUser> GetUserByIdAsync(int id);
-        Task<AppUser> GetUserByUserNameAsync(string username);
+        //Task<AppUser> GetUserByUserNameAsync(string username);
+
+        Task<IEnumerable<MemberDto>> GetMembersAsync();
+        Task<MemberDto> GetMemberAsync(string userName);
     }
 }
