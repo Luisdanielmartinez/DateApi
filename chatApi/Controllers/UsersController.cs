@@ -1,4 +1,6 @@
-﻿using chatApi.Data;
+﻿using AutoMapper;
+using chatApi.Data;
+using chatApi.DTOs;
 using chatApi.Entities;
 using chatApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -15,28 +17,38 @@ namespace chatApi.Controllers
     public class UsersController : BaseApiController
     {
         public readonly IUserRepository _userRepository;
-        public UsersController(IUserRepository userRepository)
+        public readonly IMapper _mapper;
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
+            var users = await _userRepository.GetUserAsync();
 
-            return Ok(await _userRepository.GetUserAsync(););
+            var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
+
+            return Ok(usersToReturn);
         }
 
         //api/users/3
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        public async Task<ActionResult<MemberDto>> GetUser(int id)
         {
-            return await _userRepository.GetUserByIdAsync(id);
+
+            var user= await _userRepository.GetUserByIdAsync(id);
+
+            return _mapper.Map<MemberDto>(user);
         }
         [HttpGet("{username}")]
-        public async Task<ActionResult<AppUser>> GetByUserName(string userName)
+        public async Task<ActionResult<MemberDto>> GetByUserName(string userName)
         {
-            return await _userRepository.GetUserByUserNameAsync(userName);
+            var user=await _userRepository.GetUserByUserNameAsync(userName);
+
+            return _mapper.Map<MemberDto>(user);
         }
     }
 }

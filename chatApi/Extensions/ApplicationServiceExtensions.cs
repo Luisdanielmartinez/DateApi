@@ -1,4 +1,5 @@
 ﻿using chatApi.Data;
+using chatApi.Helpers;
 using chatApi.Interfaces;
 using chatApi.Repositories;
 using chatApi.Services;
@@ -18,6 +19,7 @@ namespace chatApi.Extensions
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlite(config.GetConnectionString("DefaultConnection"));
