@@ -8,6 +8,7 @@ namespace chatApi.Entities
         public int Id { get; set; }
         public string Url{ get; set; }
         public bool IsMain { get; set; }
+        //el public id para borrar la foto 
         public string PublicId { get; set; }
 
         public AppUser AppUser { get; set; }
