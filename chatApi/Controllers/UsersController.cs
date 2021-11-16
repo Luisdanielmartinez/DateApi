@@ -2,8 +2,10 @@
 using chatApi.Data;
 using chatApi.DTOs;
 using chatApi.Entities;
+using chatApi.Extensions;
 using chatApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,10 +21,12 @@ namespace chatApi.Controllers
     {
         public readonly IUserRepository _userRepository;
         public readonly IMapper _mapper;
-        public UsersController(IUserRepository userRepository, IMapper mapper)
+        public readonly IPhotoService _photoService;
+        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _photoService = photoService;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
@@ -49,7 +53,7 @@ namespace chatApi.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.GetUserName();
             var user = await _userRepository.GetUserByUserNameAsync(username);
 
             _mapper.Map(memberUpdateDto, user);
@@ -59,6 +63,34 @@ namespace chatApi.Controllers
 
             return BadRequest("Failed to update user");
             
+        }
+        [HttpPost("add-photo")]
+        public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+        {
+            var user = await _userRepository.GetUserByUserNameAsync(User.GetUserName());
+
+            var result =await _photoService.AddPhotoAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            //creando nueva fotos
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+
+            if (user.Photos.Count == 0)
+            {
+                photo.IsMain = true;
+            }
+            //agregar la foto
+            user.Photos.Add(photo);
+            //grabar y retornar el resultado 
+            if (await _userRepository.SaveAllAsync())
+                return _mapper.Map<PhotoDto>(photo);
+
+            return BadRequest("Problem adding photo");
         }
     }
 }
