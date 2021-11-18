@@ -33,10 +33,19 @@ namespace chatApi.Repositories
 
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
-            var query = _context.Users
-                  .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                 .AsNoTracking();
-            return await PagedList<MemberDto>.CreateAsync(query,userParams.PageNumber,userParams.PageSize);
+            var query = _context.Users.AsQueryable();
+
+            query = query.Where(u => u.UserName != userParams.CurrerntUserName);
+            query = query.Where(u => u.Gender == userParams.Gender);
+
+            var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+            var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+
+            query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
+            return await PagedList<MemberDto>.CreateAsync(
+                query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber,userParams.PageSize);
         }
 
         //public async Task<IEnumerable<AppUser>> GetUserAsync()
