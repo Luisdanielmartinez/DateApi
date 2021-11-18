@@ -129,7 +129,6 @@ namespace chatApi.Controllers
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
                 if (result.Error != null) return BadRequest(result.Error.Message);
-
             }
             user.Photos.Remove(photo);
 
