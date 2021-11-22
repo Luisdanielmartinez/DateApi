@@ -2,6 +2,7 @@
 using chatApi.DTOs;
 using chatApi.Entities;
 using chatApi.Extensions;
+using chatApi.Helpers;
 using chatApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,9 +56,13 @@ namespace chatApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes(string predicate)
+        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes([FromQuery]LikesParams likesParams)
         {
-            var users= await _likesRepository.GetUserLikes(predicate, User.GetUserId());
+            likesParams.UserId = User.GetUserId();
+            var users= await _likesRepository.GetUserLikes(likesParams);
+
+            Response.AddPaginationHeader(users.CurrentPage, users.PageSize,
+                users.TotalCount, users.TotalPages);
 
             return Ok(users);
         }
