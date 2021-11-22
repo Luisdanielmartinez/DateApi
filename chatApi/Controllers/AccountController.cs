@@ -49,7 +49,8 @@ namespace chatApi.Controllers
                 UserName=user.UserName, 
                 Token=_tokenService.CreateToken(user),
                 KnownAs=user.KnowAs,
-                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain).Url
+                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain).Url,
+                Gender=user.Gender
             };
         }
 
@@ -69,7 +70,13 @@ namespace chatApi.Controllers
             {
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
             }
-            return new UserDto { UserName = user.UserName, Token = _tokenService.CreateToken(user) }; ;
+            return new UserDto { 
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain).Url,
+                KnownAs=user.KnowAs,
+                Gender=user.Gender
+            }; 
         }
 
         private async Task<bool> UserExists(string userName)

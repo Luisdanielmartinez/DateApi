@@ -23,10 +23,9 @@ namespace chatApi.Entities
         public string City { get; set; }
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }
-
-        //public int GetAge()
-        //{
-        //    return DateOfBirth.CalculateAge();
-        //}
+        //lista de usuarios que estan dando me gusta 
+        public ICollection<UserLike> LikeByUsers { get; set; }
+        //lista de usuario que dieron me gusta
+        public ICollection<UserLike> LikedUsers { get; set; }
     }
 }
